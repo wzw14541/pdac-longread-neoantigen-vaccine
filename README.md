@@ -57,3 +57,18 @@ python scripts/make_table_s2.py        # 由 CSV（及可选 PSI）生成独立 
 ## 不包含的内容
 
 长读长 / DEAS / 免疫肽组分析管线不在本仓库（原机器上的 `C:\ai\pdac`）。这里只放 V17 稿件包。
+
+## 上传到 GitHub（必须私有）
+
+本机已初始化 git（分支 main）。在 GitHub 网页新建 **private** 空仓库 pdac-v17 后：
+
+```
+gh repo create pdac-v17 --private --source=. --remote=origin --push
+```
+
+或：
+
+```
+git remote add origin https://github.com/<USERNAME>/pdac-v17.git
+git push -u origin main
+```
