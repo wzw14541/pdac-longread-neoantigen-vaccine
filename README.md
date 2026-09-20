@@ -60,15 +60,16 @@ python scripts/make_table_s2.py        # 由 CSV（及可选 PSI）生成独立 
 
 ## 上传到 GitHub（必须私有）
 
-本机已初始化 git（分支 main）。在 GitHub 网页新建 **private** 空仓库 pdac-v17 后：
+本机已初始化 git（分支 main）。在仓库根目录执行：
+
+```
+powershell -ExecutionPolicy Bypass -File .\push-private.ps1
+```
+
+脚本会调用已解压的 `gh`：若未登录则先 `gh auth login`，然后创建 **private** 仓库 `pdac-v17` 并推送 `main` 。
+
+也可手动：
 
 ```
 gh repo create pdac-v17 --private --source=. --remote=origin --push
-```
-
-或：
-
-```
-git remote add origin https://github.com/<USERNAME>/pdac-v17.git
-git push -u origin main
 ```
