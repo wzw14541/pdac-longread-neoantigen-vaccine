@@ -1,0 +1,10 @@
+Table S2 rebuilt from previously computed DEAS results.
+Source RDS (local, not in this repo): set PDAC_RDS_PATH; default C:\ai\pdac\nag\dt\jp_evt_rst.rds
+PSI used for that test (local, not in this repo): set PDAC_PSI_PATH; default C:\ai\pdac\nag\dt\as\jp_evt.psi
+Cohort: JP / GSE196009, 13 tumor vs 6 normal (Bi-*/P-* T/N names).
+Not recomputed: dpsi, raw_p, p_adj, t_psi, n_psi were already in the RDS.
+Paper threshold: |delta_PSI| >= 0.2 and P <= 0.01 -> 48 events (23 up, 25 down).
+Output workbook: tables/Supplementary_Tables_V17.xlsx
+Sheet Table_S2_Differential_AS = DEAS results (7434 events).
+Standalone file: tables/Table_S2.xlsx
+CSV: tables/Table_S2_Differential_AS.csv
