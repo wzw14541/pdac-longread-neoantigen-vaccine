@@ -65,30 +65,34 @@ def main():
     n_up = int((out["direction"] == "Up").sum())
     n_down = int((out["direction"] == "Down").sum())
     print("events", len(out), "paper_threshold", n_sig, "up", n_up, "down", n_down)
-    for lab in ["DYNC1I2-AF", "GSN-A5", "SEMA4G-RI", "ACSL5-SE", "LOXL2-SE"]:
-        sub = out[
-            (out["gene_symbol"] == lab.split("-")[0])
-            & (out["AS_type"] == lab.split("-")[1])
-            & out["paper_threshold"]
-        ]
-        print(
-            lab,
-            "sig rows",
-            len(sub),
-            sub[["delta_PSI", "P_value"]].head(3).to_string() if len(sub) else "NONE",
-        )
 
-    out.to_csv(TABLE_S2_CSV, index=False)
+    published = out.rename(columns={
+        "event_id": "Event ID",
+        "gene_id": "Gene ID",
+        "gene_symbol": "Gene symbol",
+        "event_label": "Event label",
+        "AS_type": "AS type",
+        "novel_isoform_event": "Novel-isoform event",
+        "mean_PSI_tumor": "Mean PSI (tumor)",
+        "mean_PSI_normal": "Mean PSI (normal)",
+        "delta_PSI": "Delta PSI",
+        "P_value": "P value",
+        "P_adj_BH": "P value (BH-adjusted)",
+        "significance": "Significance",
+        "paper_threshold": "Meets paper threshold",
+        "direction": "Direction",
+    })
+    published.to_csv(TABLE_S2_CSV, index=False)
     print("wrote", TABLE_S2_CSV)
 
     TABLE_S2_NOTE.write_text(
-        "Table S2 rebuilt from previously computed DEAS results.\n"
-        "Source RDS (local, not in this repo): set PDAC_RDS_PATH; default {}\n"
-        "PSI matrix (local, not in this repo): set PDAC_PSI_PATH\n"
-        "Cohort: JP / GSE196009, 13 tumor vs 6 normal (sample names Bi-*/P-* T/N).\n"
-        "Columns dpsi, raw_p, p_adj, t_psi, n_psi already in the RDS; not recomputed.\n"
-        "Paper threshold reproduced: |delta_PSI| >= 0.2 and P_value <= 0.01 -> 48 events (23 up, 25 down).\n"
-        "Old Table_S2_PDAC_PSI kept as Table_S2_PSI_isoform_SRR.\n".format(RDS),
+        "Table S2b is the JP / GSE196009 DEAS result (13 tumor vs 6 normal).\n"
+        "Source RDS (local, not in this repo): set PDAC_RDS_PATH.\n"
+        "PSI matrix (local, not in this repo): set PDAC_PSI_PATH.\n"
+        "Paper threshold: |delta_PSI| >= 0.2 and P <= 0.01 -> 48 events (23 up, 25 down).\n"
+        "Official workbook: tables/Supplementary_Tables.xlsx (sheets S2a / S2b / S2c).\n"
+        "CSV: tables/Table_S2_Differential_AS.csv\n"
+        "Standalone S2b+S2c: tables/Table_S2.xlsx\n",
         encoding="utf-8",
     )
 
@@ -103,11 +107,14 @@ def main():
     print("sheets", wb.sheetnames)
 
     old_name = "Table_S2_PDAC_PSI"
-    keep_name = "Table_S2_PSI_isoform_SRR"
-    new_name = "Table_S2_Differential_AS"
+    keep_name = "S2a Isoform PSI matrix"
+    new_name = "S2b AS Differential Events"
     if old_name in wb.sheetnames and keep_name not in wb.sheetnames:
         wb[old_name].title = keep_name
         print("renamed", old_name, "->", keep_name)
+    if "Table_S2_Differential_AS" in wb.sheetnames:
+        del wb["Table_S2_Differential_AS"]
+        print("removed previous Table_S2_Differential_AS")
     if new_name in wb.sheetnames:
         del wb[new_name]
         print("removed previous", new_name)
@@ -123,7 +130,7 @@ def main():
         bottom=Side(style="thin", color="D9D9D9"),
     )
 
-    for r_i, row in enumerate(dataframe_to_rows(out, index=False, header=True), 1):
+    for r_i, row in enumerate(dataframe_to_rows(published, index=False, header=True), 1):
         ws.append(row)
         if r_i == 1:
             for cell in ws[1]:
@@ -131,16 +138,16 @@ def main():
                 cell.fill = header_fill
                 cell.alignment = Alignment(horizontal="center", wrap_text=True)
         else:
-            is_sig = bool(out.iloc[r_i - 2]["paper_threshold"])
+            is_sig = bool(published.iloc[r_i - 2]["Meets paper threshold"])
             for c_i, cell in enumerate(ws[r_i], 1):
                 cell.font = Font(name="Arial", size=9)
                 cell.border = thin
                 if is_sig:
                     cell.fill = sig_fill
-                hdr = out.columns[c_i - 1]
-                if hdr in ("mean_PSI_tumor", "mean_PSI_normal", "delta_PSI") and isinstance(cell.value, float):
+                hdr = published.columns[c_i - 1]
+                if hdr in ("Mean PSI (tumor)", "Mean PSI (normal)", "Delta PSI") and isinstance(cell.value, float):
                     cell.number_format = "0.000"
-                if hdr in ("P_value", "P_adj_BH") and isinstance(cell.value, float):
+                if hdr in ("P value", "P value (BH-adjusted)") and isinstance(cell.value, float):
                     cell.number_format = "0.00E+00"
 
     ws.auto_filter.ref = ws.dimensions

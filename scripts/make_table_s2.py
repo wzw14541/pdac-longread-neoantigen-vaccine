@@ -74,7 +74,7 @@ def main():
         [""],
         ["Sheet", "Content"],
         [
-            "Differential_AS",
+            "S2b AS Differential Events",
             "Event-level DEAS used for Figure 2b/2c. 7434 tested events; 48 pass |delta_PSI|>=0.2 and P<=0.01 (23 up, 25 down).",
         ],
         [
@@ -104,21 +104,21 @@ def main():
         cell.font = header_font
         cell.fill = header_fill
 
-    ws1 = wb.create_sheet("Differential_AS")
+    ws1 = wb.create_sheet("S2b AS Differential Events")
     for r_i, row in enumerate(dataframe_to_rows(deas, index=False, header=True), 1):
         ws1.append(list(row))
         if r_i == 1:
             continue
-        is_sig = bool(deas.iloc[r_i - 2]["paper_threshold"])
+            is_sig = bool(deas.iloc[r_i - 2]["Meets paper threshold"])
         for c_i, cell in enumerate(ws1[r_i], 1):
             cell.font = Font(name="Arial", size=9)
             cell.border = thin
             if is_sig:
                 cell.fill = sig_fill
             hdr = deas.columns[c_i - 1]
-            if hdr in ("mean_PSI_tumor", "mean_PSI_normal", "delta_PSI") and isinstance(cell.value, float):
+            if hdr in ("Mean PSI (tumor)", "Mean PSI (normal)", "Delta PSI", "mean_PSI_tumor", "mean_PSI_normal", "delta_PSI") and isinstance(cell.value, float):
                 cell.number_format = "0.000"
-            if hdr in ("P_value", "P_adj_BH") and isinstance(cell.value, float):
+            if hdr in ("P value", "P value (BH-adjusted)", "P_value", "P_adj_BH") and isinstance(cell.value, float):
                 cell.number_format = "0.00E+00"
     style_header(ws1)
     ws1.column_dimensions["A"].width = 72
@@ -151,7 +151,7 @@ def main():
 
     wb.save(TABLE_S2)
     print("saved", TABLE_S2, TABLE_S2.stat().st_size)
-    print("DEAS", deas.shape, "sig", int(deas.paper_threshold.sum()))
+    print("DEAS", deas.shape, "sig", int(deas["Meets paper threshold"].sum()))
     if psi is not None:
         print("PSI", psi.shape, "T", len(tumor), "N", len(normal), tumor, normal)
 
