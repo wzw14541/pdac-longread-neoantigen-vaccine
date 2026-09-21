@@ -33,3 +33,8 @@ desktop.ini
 
 # Local helper binaries
 .tools/
+# Local manuscript / figures (not published with this repo)
+manuscript/
+figures/
+*.docx
+*.pptx

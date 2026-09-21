@@ -16,7 +16,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from paths import (
     RDS,
     SUPP_ORIGINAL,
-    SUPP_V17,
+    SUPP_TABLES,
     TABLE_S2_CSV,
     TABLE_S2_NOTE,
     TABLES,
@@ -44,7 +44,7 @@ def main():
             "Missing RDS: {}\nSet PDAC_RDS_PATH to jp_evt_rst.rds".format(RDS)
         )
 
-    xlsx = SUPP_V17 if SUPP_V17.is_file() else SUPP_ORIGINAL
+    xlsx = SUPP_TABLES if SUPP_TABLES.is_file() else SUPP_ORIGINAL
     if not xlsx.is_file():
         raise SystemExit("Missing supplementary workbook: {}".format(xlsx))
     backup = TABLES / "Supplementary_Tables_RealPDAC_revised_backup_before_S2.xlsx"
@@ -154,7 +154,7 @@ def main():
         ws.column_dimensions[col].width = w
     ws.row_dimensions[1].height = 22
 
-    out_xlsx = SUPP_V17
+    out_xlsx = SUPP_TABLES
     wb.save(out_xlsx)
     print("saved", out_xlsx, "sheets", wb.sheetnames)
     print("DONE")
