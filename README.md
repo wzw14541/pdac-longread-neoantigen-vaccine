@@ -1,75 +1,55 @@
-# PDAC V17 稿件工作区
+# Companion code for the PDAC long-read neoantigen / mRNA-LNP vaccine manuscript
 
-未发表稿件的私有工作副本（alternative splicing neoantigen / mRNA-LNP vaccine，V17），以及在不破坏 Paperpile 域和 Word 批注的前提下做修订的脚本。
+**Paper:** Long-Read Sequencing-Enhanced Immunopeptidomics Unveils Non-Canonical Neoepitopes for mRNA-LNP Vaccination against Pancreatic Cancer
 
-**未发表，保留所有权利。请保持仓库私有，不要公开。**
+**Authors:** Xiangeng Wang, Hualiang Yao, Ming Zhong, Ziwei Wang, Tianli Luo, Yi Shuai, Tao Jiang, Hang Jiang, Xin Wang
 
-## 目录
+This repository is the **manuscript companion packet** (version 17): the Word draft, main figures, supplementary tables, and the scripts used to revise the text and rebuild Table S2. It is the code/data folder that goes with the article, not a generic dump.
 
-```
-manuscript/     V17.docx (修订稿)、V17_base.docx (只读原稿)、CHANGELOG
-figures/        主图 PowerPoint (v3 / v4)
-tables/         补充表格与 Table S2
-scripts/        修订、校验、重建 Table S2
-```
+本仓库是论文配套材料（V17）：正文稿、主图、补充表，以及修订文稿、重建 Table S2 的脚本。
 
-当前稿件：`manuscript/V17.docx`  
-**不要**点击 Paperpile Update。  
-**不要** Accept All 或删除批注。
+Corresponding author: Xin Wang (xinwang@cuhk.edu.hk)
 
-## 表格
+## What maps to the paper
 
-| 文件 | 作用 |
+| Paper item | In this repo |
 | --- | --- |
-| `tables/Supplementary_Tables_V17.xlsx` | 当前补充表格工作簿 |
-| `tables/Table_S2.xlsx` | 独立 Table S2（DEAS + JP PSI） |
-| `tables/Table_S2_Differential_AS.csv` | 7,434 条 DEAS；48 条通过 abs(dPSI)>=0.2 且 P<=0.01 |
+| Main text (V17) | manuscript/V17.docx |
+| Original V16 source (read-only) | manuscript/V17_base.docx |
+| Main figures | igures/2026-08-20_PDAC_mainfigure_v3.pptx (body-matched); v4 for comparison |
+| Supplementary tables | 	ables/Supplementary_Tables_V17.xlsx |
+| Table S2 (DEAS, Figure 2b/2c) | 	ables/Table_S2.xlsx and 	ables/Table_S2_Differential_AS.csv |
+| Track-changes / verification scripts | scripts/ |
 
-Table S2 来自 JP / GSE196009（13 tumor vs 6 normal）。它**不能**替代 Figure 2a 的全景计数（23,514 条）。
+Table S2: JP / GSE196009, 13 tumor vs 6 normal; 7,434 tested events; 48 pass |dPSI| >= 0.2 and P <= 0.01. This DEAS table does **not** replace Figure 2a landscape counts (23,514 events).
 
-重建 S2 所需的 RDS / PSI 仍留在分析机上，不进本仓库。本机可设置：
+## Keywords
 
-```
-set PDAC_RDS_PATH=C:\ai\pdac\nag\dt\jp_evt_rst.rds
-set PDAC_PSI_PATH=C:\ai\pdac\nag\dt\as\jp_evt.psi
-```
+PDAC; long-read sequencing; novel isoforms; non-canonical neoantigens; immunopeptidomics; mRNA-LNP vaccine; alternative splicing
 
-## 脚本
+## Layout
 
-在仓库根目录执行 `pip install -r requirements.txt` 后：
+`
+manuscript/   article text (V17.docx)
+figures/      main-figure PowerPoint
+tables/       supplementary tables + Table S2
+scripts/      revision and Table S2 rebuild tools
+`
 
-```
-python scripts/integrity_check.py      # 批注 / Paperpile / 修订标记 vs V17_base
-python scripts/verify_v17.py           # V17.docx 关键短语核对
-python scripts/ooxml_revise.py         # OOXML 修订（已应用到当前稿）
-python scripts/ooxml_fixup.py          # IFN / 枚举 / 双句点收尾
-python scripts/apply_v17_edits.py      # Word COM 替代方案（Windows + Word）
-python scripts/rebuild_table_s2.py     # 从本机 RDS 重建 S2 并写入 V17 工作簿
-python scripts/make_table_s2.py        # 由 CSV（及可选 PSI）生成独立 Table_S2.xlsx
-```
+Open manuscript/V17.docx in Word. Do not click Paperpile Update. Do not Accept All or delete comments.
 
-`ooxml_revise.py` 只拆分/包裹 run，写入 `w:del` / `w:ins`，不用 python-docx 重建段落。
+## Scripts
 
-## 图
+`
+pip install -r requirements.txt
+python scripts/integrity_check.py
+python scripts/verify_v17.py
+python scripts/rebuild_table_s2.py   # needs local RDS via PDAC_RDS_PATH
+python scripts/make_table_s2.py
+`
 
-`figures/2026-08-20_PDAC_mainfigure_v3.pptx` 与当前正文一致（Figure 2d scheme A）。v4 留作对照；图注尚未锁死。
+The long-read / DEAS / immunopeptidome analysis pipeline is **not** in this repository. This folder is the article packet only.
 
-## 不包含的内容
+## License
 
-长读长 / DEAS / 免疫肽组分析管线不在本仓库（原机器上的 `C:\ai\pdac`）。这里只放 V17 稿件包。
-
-## 上传到 GitHub（必须私有）
-
-本机已初始化 git（分支 main）。在仓库根目录执行：
-
-```
-powershell -ExecutionPolicy Bypass -File .\push-private.ps1
-```
-
-脚本会调用已解压的 `gh`：若未登录则先 `gh auth login`，然后创建 **private** 仓库 `pdac-v17` 并推送 `main` 。
-
-也可手动：
-
-```
-gh repo create pdac-v17 --private --source=. --remote=origin --push
-```
+Unpublished manuscript materials. All rights reserved.
